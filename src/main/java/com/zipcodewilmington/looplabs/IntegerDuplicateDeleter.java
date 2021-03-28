@@ -11,48 +11,38 @@ public final class IntegerDuplicateDeleter extends DuplicateDeleter<Integer> {
         super(intArray);
     }
 
+    public Integer[] addItem(Integer[] intArray, int index, Integer integer){
+        Integer[] newArray = new Integer[intArray.length + 1];
+
+        for (int i = 0; i < newArray.length; i++) {
+            if (i == index) {
+                newArray[i]  = integer;
+            } else if ( i < index) {
+                newArray[i] = intArray[i];
+            } else if (i > index) {
+                newArray[i+1] = intArray[i];
+            }
+        }
+        return newArray;
+    }
+
+    public Integer[] addToEnd(Integer[] intArray, Integer integer){
+        return addItem(intArray, intArray.length, integer);
+    }
+
     @Override
     public Integer[] removeDuplicates(int maxNumberOfDuplications) {
-        Arrays.sort(array);
-        int counter;
-
-        if(maxNumberOfDuplications == 0) {
-            return new Integer[0];
-        }
+        Integer[] newArray = new Integer[0];
 
         for(int i = 0; i < array.length; i++) {
-            counter = 0;
-            if(array[i] != null) {
-                for (int j = 0; j < array.length; j++) {
-                    Integer currentValue = array[i];
-                    if (array[i] == array[j]) {
-                        counter++;
-                        if(counter == maxNumberOfDuplications) {
-                            for(int k = 0; k < array.length; k++) {
-                                if(array[k] == currentValue) {
-                                    array[k] = null;
-                                    counter = 0;
-                                }
-                            }
-                        }
-                    }
+            int counter = 0;
+            for(int j = 0; j < array.length; j++) {
+                if(array[i] == array[j]) {
+                    counter++;
                 }
             }
-        }
-        int newCounter = 0;
-        for(int i = 0; i < array.length; i++) {
-            if(array[i] == null) {
-                newCounter++;
-            }
-        }
-
-        Integer[] newArray = new Integer[array.length - newCounter];
-
-        int newIndex = 0;
-        for (int i = 0; i < array.length; i++) {
-            if(array[i] != null) {
-                newArray[newIndex] = array[i];
-                newIndex++;
+            if(counter < maxNumberOfDuplications) {
+                newArray = addToEnd(newArray, array[i]);
             }
         }
         return newArray;
@@ -60,6 +50,19 @@ public final class IntegerDuplicateDeleter extends DuplicateDeleter<Integer> {
 
     @Override
     public Integer[] removeDuplicatesExactly(int exactNumberOfDuplications) {
-        return new Integer[0];
+        Integer[] newArray = new Integer[0];
+
+        for(int i = 0; i < array.length; i++) {
+            int counter = 0;
+            for(int j = 0; j < array.length; j++) {
+                if(array[i] == array[j]) {
+                    counter++;
+                }
+            }
+            if(counter != exactNumberOfDuplications) {
+                newArray = addToEnd(newArray, array[i]);
+            }
+        }
+        return newArray;
     }
 }
